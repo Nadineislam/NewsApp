@@ -29,9 +29,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.newsapp2.core.utils.Resource
-import com.example.newsapp2.news_feature.data.remote.dto.Article
 import com.example.newsapp2.news_feature.presentation.viewmodel.NewsViewModel
+import com.example.newsapp2.news_feature.presentation.viewstates.NewsViewState
 import com.example.newsapp2.ui.theme.NewsApp2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -93,23 +92,24 @@ fun CategoryList(viewModel: NewsViewModel, onCategoryClick: (String) -> Unit) {
     val state by viewModel.state.collectAsState()
 
     when (state) {
-        is Resource.Loading -> {
-          //  CircularProgressIndicator()
+        is NewsViewState.Loading -> {
+           // CircularProgressIndicator()
         }
-        is Resource.Success -> {
-            LazyRow {
-                items((state as Resource.Success<Map<String, List<Article>>>).data?.keys!!.toList()) { category ->
-                    CategoryCard(category = category) {
-                        onCategoryClick(category)
+        is NewsViewState.Error -> {
+            Text(text = (state as NewsViewState.Error).message, color = Color.Red)
+        }
+        is NewsViewState.SuccessCategories -> {
+            val categories = (state as NewsViewState.SuccessCategories).categories
+            categories?.let {
+                LazyRow {
+                    items(it.keys.toList()) { category ->
+                        CategoryCard(category = category) {
+                            onCategoryClick(category)
+                        }
                     }
                 }
             }
         }
-        is Resource.Error -> {
-            Text(
-                text = (state as Resource.Error).message ?: "Unknown error",
-                color = Color.Red
-            )
-        }
     }
 }
+
