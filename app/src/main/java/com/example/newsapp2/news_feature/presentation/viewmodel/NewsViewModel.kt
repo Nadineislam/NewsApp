@@ -2,6 +2,7 @@ package com.example.newsapp2.news_feature.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsapp2.news_feature.data.remote.dto.NewsArticle
 import com.example.newsapp2.news_feature.domain.usecase.NewsUseCase
 import com.example.newsapp2.news_feature.presentation.intents.NewsIntent
 import com.example.newsapp2.news_feature.presentation.viewstates.NewsViewState
@@ -21,6 +22,8 @@ class NewsViewModel @Inject constructor(
     private val _selectedCategory = MutableStateFlow("business")
     val selectedCategory = _selectedCategory
 
+    private val _selectedArticle = MutableStateFlow<NewsArticle?>(null)
+
     init {
         processIntent(NewsIntent.LoadNews(_selectedCategory.value))
     }
@@ -28,6 +31,7 @@ class NewsViewModel @Inject constructor(
     fun processIntent(intent: NewsIntent) {
         when (intent) {
             is NewsIntent.LoadNews -> loadNews(intent.category)
+            is NewsIntent.SelectArticle -> selectArticle(intent.article)
         }
     }
 
@@ -45,5 +49,12 @@ class NewsViewModel @Inject constructor(
                 _state.value = NewsViewState.Error("Failed to load news")
             }
         }
+    }
+
+    private fun selectArticle(article: NewsArticle) {
+        _selectedArticle.value = article
+    }
+    fun findArticleByUrl(url: String): NewsArticle? {
+        return (state.value as? NewsViewState.Success)?.articles?.find { it.url == url }
     }
 }

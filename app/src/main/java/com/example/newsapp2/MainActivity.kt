@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.example.newsapp2.news_feature.presentation.components.NewsScreen
+import androidx.navigation.compose.rememberNavController
+import com.example.newsapp2.news_feature.presentation.components.NewsNavGraph
 import com.example.newsapp2.news_feature.presentation.viewmodel.NewsViewModel
 import com.example.newsapp2.ui.theme.NewsApp2Theme
 import dagger.hilt.android.AndroidEntryPoint
@@ -16,8 +17,8 @@ class MainActivity : ComponentActivity() {
         val viewModel: NewsViewModel by viewModels()
         setContent {
             NewsApp2Theme {
-                NewsScreen(viewModel = viewModel)
-
+                val navController = rememberNavController()
+                NewsNavGraph(navController = navController, viewModel = viewModel)
             }
         }
     }
