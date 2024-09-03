@@ -1,10 +1,12 @@
 package com.example.newsapp2.core.di
 
+import android.content.Context
 import com.example.newsapp2.core.utils.Constants.Companion.BASE_URL
 import com.example.newsapp2.news_feature.data.remote.NewsApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -41,4 +43,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideApiService(retrofit: Retrofit): NewsApi = retrofit.create(NewsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideApplicationContext(@ApplicationContext context: Context): Context = context
 }
