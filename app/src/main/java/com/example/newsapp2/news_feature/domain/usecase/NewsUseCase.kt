@@ -5,6 +5,6 @@ import javax.inject.Inject
 
 class NewsUseCase @Inject constructor(private val repository: NewsRepository) {
 
-    operator fun invoke() = repository.getNewsCategories()
+   suspend operator fun invoke(category: String) = repository.getNewsByCategory(category)
 
 }
