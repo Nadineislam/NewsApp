@@ -1,5 +1,6 @@
 package com.example.newsapp2.news_feature.presentation.components
 
+import android.net.Uri
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -13,12 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.navigation.NavController
 import com.example.newsapp2.news_feature.data.remote.dto.NewsArticle
 import com.example.newsapp2.news_feature.presentation.intents.NewsIntent
 import com.example.newsapp2.news_feature.presentation.viewmodel.NewsViewModel
@@ -26,7 +26,7 @@ import com.example.newsapp2.news_feature.presentation.viewstates.NewsViewState
 import java.util.Locale
 
 @Composable
-fun NewsScreen(viewModel: NewsViewModel) {
+fun NewsScreen(navController: NavController, viewModel: NewsViewModel) {
     val state by viewModel.state.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
 
@@ -49,11 +49,16 @@ fun NewsScreen(viewModel: NewsViewModel) {
         )
         when (state) {
             is NewsViewState.Loading -> {
-                BasicText("Loading...")
+                CircularProgressIndicator()
             }
 
             is NewsViewState.Success -> {
-                NewsList((state as NewsViewState.Success).articles)
+                NewsList(
+                    newsArticles = (state as NewsViewState.Success).articles,
+                    onArticleClick = { encodedUrl ->
+                        navController.navigate("article_details/$encodedUrl")
+                    }
+                )
             }
 
             is NewsViewState.Error -> {
@@ -63,7 +68,6 @@ fun NewsScreen(viewModel: NewsViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsCategoryChips(
     categories: List<String>,
@@ -95,15 +99,18 @@ fun NewsCategoryChips(
 }
 
 @Composable
-fun NewsList(newsArticles: List<NewsArticle>) {
+fun NewsList(newsArticles: List<NewsArticle>, onArticleClick: (String) -> Unit) {
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp) // Adds spacing between items
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(newsArticles) { article ->
-            NewsItem(article)
+            NewsItem(article = article, onClick = {
+                val url = article.url
+                val encodedUrl = Uri.encode(url)
+                onArticleClick(encodedUrl)
+            })
         }
     }
 }
-
 

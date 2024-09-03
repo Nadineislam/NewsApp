@@ -1,5 +1,6 @@
 package com.example.newsapp2.news_feature.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,11 +23,12 @@ import coil.compose.AsyncImage
 import com.example.newsapp2.news_feature.data.remote.dto.NewsArticle
 
 @Composable
-fun NewsItem(article: NewsArticle) {
+fun NewsItem(article: NewsArticle, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(3.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(4.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
