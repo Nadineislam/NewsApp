@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.ui.Alignment
 import androidx.navigation.NavController
 import com.example.newsapp2.news_feature.data.remote.dto.NewsArticle
 import com.example.newsapp2.news_feature.presentation.intents.NewsIntent
@@ -49,7 +50,9 @@ fun NewsScreen(navController: NavController, viewModel: NewsViewModel) {
         )
         when (state) {
             is NewsViewState.Loading -> {
-                CircularProgressIndicator()
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator()
+                }
             }
 
             is NewsViewState.Success -> {
