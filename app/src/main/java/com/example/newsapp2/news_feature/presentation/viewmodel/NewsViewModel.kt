@@ -2,14 +2,11 @@ package com.example.newsapp2.news_feature.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp2.core.utils.Resource
-import com.example.newsapp2.core.utils.categorizeArticles
 import com.example.newsapp2.news_feature.domain.usecase.NewsUseCase
 import com.example.newsapp2.news_feature.presentation.intents.NewsIntent
 import com.example.newsapp2.news_feature.presentation.viewstates.NewsViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,33 +14,36 @@ import javax.inject.Inject
 class NewsViewModel @Inject constructor(
     private val newsUseCase: NewsUseCase
 ) : ViewModel() {
+
     private val _state = MutableStateFlow<NewsViewState>(NewsViewState.Loading)
-    val state = _state.asStateFlow()
+    val state = _state
+
+    private val _selectedCategory = MutableStateFlow("business")
+    val selectedCategory = _selectedCategory
 
     init {
-        processIntent(NewsIntent.LoadCategories)
+        processIntent(NewsIntent.LoadNews(_selectedCategory.value))
     }
 
-    private fun processIntent(intent: NewsIntent) {
-        viewModelScope.launch {
-            when (intent) {
-                is NewsIntent.LoadCategories -> loadCategories()
-            }
+    fun processIntent(intent: NewsIntent) {
+        when (intent) {
+            is NewsIntent.LoadNews -> loadNews(intent.category)
         }
     }
 
-    private fun loadCategories() {
+    private fun loadNews(category: String) {
+        _selectedCategory.value = category
         viewModelScope.launch {
-            newsUseCase().collect { resource ->
-                _state.value = when (resource) {
-                    is Resource.Success -> {
-                        val articles = resource.data?.articles ?: emptyList()
-                        NewsViewState.SuccessCategories(categorizeArticles(articles))
-                    }
-                    is Resource.Error -> NewsViewState.Error(resource.message ?: "Unknown error")
-                    is Resource.Loading -> NewsViewState.Loading
+            val response = newsUseCase(category)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    _state.value = NewsViewState.Success(it.articles)
+                } ?: run {
+                    _state.value = NewsViewState.Error("No articles found")
                 }
+            } else {
+                _state.value = NewsViewState.Error("Failed to load news")
             }
         }
-}}
-
+    }
+}
