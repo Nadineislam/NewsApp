@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.newsapp2.news_feature.data.remote.dto.NewsArticle
 import com.example.newsapp2.news_feature.presentation.intents.NewsIntent
@@ -28,8 +28,8 @@ import java.util.Locale
 
 @Composable
 fun NewsScreen(navController: NavController, viewModel: NewsViewModel) {
-    val state by viewModel.state.collectAsState()
-    val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val selectedCategory by viewModel.selectedCategory.collectAsStateWithLifecycle()
 
     Column {
         val categories = listOf(
