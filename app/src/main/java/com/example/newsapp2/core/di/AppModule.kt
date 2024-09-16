@@ -1,7 +1,7 @@
 package com.example.newsapp2.core.di
 
 import android.content.Context
-import com.example.newsapp2.core.utils.Constants.Companion.BASE_URL
+import com.example.newsapp2.BuildConfig
 import com.example.newsapp2.news_feature.data.remote.NewsApi
 import dagger.Module
 import dagger.Provides
@@ -36,7 +36,7 @@ object AppModule {
     @Provides
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
+        .baseUrl(BuildConfig.BASE_URL)
         .client(okHttpClient)
         .build()
 
