@@ -5,9 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.navigation.compose.rememberNavController
-import com.example.newsapp2.news_feature.presentation.components.NewsNavGraph
-import com.example.newsapp2.news_feature.presentation.viewmodel.NewsViewModel
+
 import com.example.newsapp2.ui.theme.NewsApp2Theme
+import com.example.presentation.components.NewsNavGraph
+import com.example.presentation.viewmodel.NewsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
