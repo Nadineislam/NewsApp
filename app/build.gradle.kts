@@ -112,5 +112,9 @@ dependencies {
 
     implementation ("androidx.datastore:datastore-preferences:1.1.1")
 
+    api(project(":news_feature:presentation"))
+    api(project(":news_feature:domain"))
+    api(project(":news_feature:data"))
+
 
 }
